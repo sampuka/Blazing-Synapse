@@ -1,6 +1,10 @@
 #include "GameScreen.hpp"
 
-GameScreen::~GameScreen
+#include <iostream>
+
+using namespace std;
+
+GameScreen::~GameScreen()
 {
     cout << "~GameScreen()" << endl;
 }

@@ -8,7 +8,6 @@ using namespace std;
 MatchScreen::MatchScreen(sf::RenderWindow *_window, MatchRole _role)
 {
     window = _window;
-    currentState = MatchState::Pregame;
     role = _role;
 
     //Setup keyboard layout
@@ -16,11 +15,17 @@ MatchScreen::MatchScreen(sf::RenderWindow *_window, MatchRole _role)
     kblayout[sf::Keyboard::A] = Direction::W;
     //kblayout[sf::Keyboard::] = Direction::;
     
-    sock = sock_init();
+    sock = sock_client_init();
     if (role == MatchRole::Creator)
-	sock->createMap("Test map", &map);
+    {
+	sock_createMatch(sock, "Test map", &map);
+	currentState = MatchState::Pregame;
+    }
     else if (role == MatchRole::Joiner)
-	sock->joinMap(&map);
+    {
+	sock_joinMatch(sock, &map);
+	currentState = MatchState::WaitingForPackage;
+    }
     else
 	cout << "Unhandled MatchRole - Segfault inevitable probably" << endl;
 }
@@ -33,13 +38,13 @@ MatchScreen::~MatchScreen()
     delete sock;
 }
 
-GameState MatchScreen::update(sf::Time t0, std::vector<sf::Keyboard::Key> keyList)
+GameState MatchScreen::update(sf::Time t0, std::vector<sf::Event::KeyEvent> keyList)
 {
-    for (sf::Keyboard::Key key : keyList)
+    for (sf::Event::KeyEvent key : keyList)
     {
 	switch (currentState)
 	{
-	case MatchState::Pregame
+	case MatchState::Pregame:
 	    //No keyboard handling for pregame, waiting for package
 	    break;
 
@@ -48,7 +53,7 @@ GameState MatchScreen::update(sf::Time t0, std::vector<sf::Keyboard::Key> keyLis
 	    break;
 
 	case MatchState::WaitingForInput:
-	    cout << "Unhandled input" << endl;
+	    cout << "Unhandled keyboard input" << endl;
 	    break;
 
 	default:
@@ -56,9 +61,21 @@ GameState MatchScreen::update(sf::Time t0, std::vector<sf::Keyboard::Key> keyLis
 	}
     }
 
-    if (currentState == MatchState::WaitingForPackage)
-	sock_recv();
+    //if (currentState == MatchState::WaitingForPackage)
+	//sock_recv();
 
+    window->clear();
     map->drawMap(window);
-    
+
+    switch (role)
+    {
+    case MatchRole::Creator:
+	return GameState::MatchCreator;
+	break;
+    case MatchRole::Joiner:
+	return GameState::MatchJoiner;
+	break;
+    }
+    cout << "Unhandled MatchRole - Segfault inevitable probably" << endl;
+    return GameState::MainMenu;
 }

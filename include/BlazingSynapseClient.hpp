@@ -4,7 +4,7 @@
 #include "GameScreen.hpp"
 
 #include <SFML/Graphics.hpp>
-#include <Thread>
+#include <thread>
 
 class BlazingSynapseClient
 {
@@ -15,8 +15,8 @@ public:
     bool hasClosed();
 
 private:
-    std::Thread *main_loop_thread;
-    std::vector<sf::Keyboard::Key> keyList;
+    std::thread *main_loop_thread;
+    //std::vector<sf::Keyboard::Key> keyList;
     void main_loop();
     
     sf::RenderWindow *window;
