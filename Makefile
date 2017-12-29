@@ -9,10 +9,10 @@ LDIR =../lib
 
 LIBS=-lm -lsfml-system -lsfml-audio -lsfml-graphics -lsfml-window -lsfml-network -pthread
 
-_DEPS = BlazingSynapseClient.hpp BlazingSynapseServer.hpp GameScreen.hpp MainMenuScreen.hpp MatchScreen.hpp MatchMap.hpp sock.hpp MapTile.hpp 
+_DEPS = BlazingSynapseClient.hpp BlazingSynapseServer.hpp GameScreen.hpp MainMenuScreen.hpp MatchScreen.hpp MatchMap.hpp sock.hpp MapTile.hpp Soldier.hpp
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = BlazingSynapseClient.o BlazingSynapseServer.o GameScreen.o MainMenuScreen.o MatchScreen.o MatchMap.o sock.o MapTile.o
+_OBJ = BlazingSynapseClient.o BlazingSynapseServer.o GameScreen.o MainMenuScreen.o MatchScreen.o MatchMap.o sock.o MapTile.o Soldier.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 .PHONY: both

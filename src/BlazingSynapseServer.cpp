@@ -11,14 +11,7 @@ BlazingSynapseServer::BlazingSynapseServer()
     window = new sf::RenderWindow(sf::VideoMode(600,600), "Blazing Synapse Server");
     state = ServerState::WaitingForCreation;
     main_loop_thread = new thread(&BlazingSynapseServer::main_loop, this);
-    listener = sock_server_init();
-    
-    player1sock = sock_listen(listener);
-    map = sock_letCreateMatch(player1sock);
-    state = ServerState::WaitingForJoin;
-    
-    player2sock = sock_listen(listener);
-    sock_letJoinMatch(player2sock, map->getMapName());
+    connection_handle_loop_thread = new thread(&BlazingSynapseServer::connection_handle_loop, this);
 }
 
 BlazingSynapseServer::~BlazingSynapseServer()
@@ -31,7 +24,12 @@ BlazingSynapseServer::~BlazingSynapseServer()
     player2sock->disconnect();
     delete player1sock;
     delete player2sock;
-    //Stop thread?
+    //Stop threads?
+}
+
+bool BlazingSynapseServer::hasClosed()
+{
+    return windowClosed;
 }
 
 void BlazingSynapseServer::main_loop()
@@ -63,7 +61,7 @@ void BlazingSynapseServer::main_loop()
 	    map->drawMap(window);
 	    break;
 
-	case ServerState::WaitingForPlayers:
+	case ServerState::WaitingForPlayerInput:
 	    window->clear(sf::Color::Black);
 	    map->drawMap(window);
 	    break;
@@ -77,7 +75,22 @@ void BlazingSynapseServer::main_loop()
     windowClosed = true;
 }
 
-bool BlazingSynapseServer::hasClosed()
+void BlazingSynapseServer::connection_handle_loop()
 {
-    return windowClosed;
+    listener = sock_server_init();
+    
+    player1sock = sock_listen(listener);
+    map = sock_letCreateMatch(player1sock);
+    state = ServerState::WaitingForJoin;
+    
+    player2sock = sock_listen(listener);
+    sock_letJoinMatch(player2sock, map->getMapName());
+
+    //sock_startGame(player1sock, player2sock);
+    state = ServerState::WaitingForPlayerInput;
+
+    while(true)
+    {
+	;
+    }
 }

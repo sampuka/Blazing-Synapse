@@ -10,7 +10,7 @@ enum class ServerState
 {
     WaitingForCreation,
     WaitingForJoin,
-    WaitingForPlayers
+    WaitingForPlayerInput
 };
 
 class BlazingSynapseServer
@@ -24,6 +24,9 @@ public:
 private:
     void main_loop();
     std::thread *main_loop_thread;
+
+    void connection_handle_loop();
+    std::thread *connection_handle_loop_thread;
 
     ServerState state;
     bool windowClosed;

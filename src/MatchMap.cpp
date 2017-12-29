@@ -19,6 +19,7 @@ void MatchMap::drawMap(sf::RenderWindow *window)
 {
     window->clear(bgcolor);
     sf::RectangleShape shape(sf::Vector2f(10,10));
+    sf::CircleShape circ(10);
 
     for(unsigned int i = 0; i < xsize; i++)
     {
@@ -28,7 +29,7 @@ void MatchMap::drawMap(sf::RenderWindow *window)
 	    {
 	    case TileType::Wall:
 		shape.setFillColor(sf::Color(50,50,50));
-		shape.setPosition(i*10,j*10);
+		shape.setPosition(i*10, j*10);
 		window->draw(shape);
 		break;
 		
@@ -40,6 +41,20 @@ void MatchMap::drawMap(sf::RenderWindow *window)
 		break;
 	    }		
 	}
+    }
+
+    circ.setFillColor(sf::Color::Blue);
+    for (Soldier sol : player1soldiers)
+    {
+	circ.setPosition(sol.getPosition().x *10, sol.getPosition().y* 10);
+	window->draw(circ);
+    }
+
+    circ.setFillColor(sf::Color::Red);
+    for (Soldier sol : player2soldiers)
+    {
+	circ.setPosition(sol.getPosition().x *10, sol.getPosition().y *10);
+	window->draw(circ);
     }
 }
 
@@ -73,6 +88,11 @@ void MatchMap::setupMap(string mapName)
 	mapTiles[15][14] = MapTile(TileType::Wall);
 	mapTiles[16][15] = MapTile(TileType::Wall);
 	mapTiles[15][16] = MapTile(TileType::Wall);
+
+	player1soldiers.push_back(Soldier(2, 2));
+	player1soldiers.push_back(Soldier(4, 4));
+	player2soldiers.push_back(Soldier(2, 26));
+	player2soldiers.push_back(Soldier(4, 24));
     }
 }
 

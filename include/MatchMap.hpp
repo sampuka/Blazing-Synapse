@@ -2,6 +2,7 @@
 #define MATCH_MAP_H
 
 #include "MapTile.hpp"
+#include "Soldier.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <vector>
@@ -39,6 +40,8 @@ private:
     unsigned int xsize;
     unsigned int ysize;
     std::vector< std::vector<MapTile> > mapTiles;
+    std::vector<Soldier> player1soldiers;
+    std::vector<Soldier> player2soldiers;
 };
 
 #endif

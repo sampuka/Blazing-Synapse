@@ -5,6 +5,7 @@
 #include "MatchMap.hpp"
 #include "sock.hpp"
 
+#include <thread>
 #include <map>
 
 enum class MatchState
@@ -23,6 +24,9 @@ public:
     GameState update(sf::Time t0, std::vector<sf::Event::KeyEvent> keyList) override;
     
 private:
+    void connection_handle_loop();
+    std::thread *connection_handle_loop_thread;
+    
     MatchMap *map;
     MatchState currentState;
     MatchRole role;
