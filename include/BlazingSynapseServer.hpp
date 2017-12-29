@@ -10,8 +10,7 @@ enum class ServerState
 {
     WaitingForCreation,
     WaitingForJoin,
-    WaitingForPlayer1,
-    WaitingForPlayer2
+    WaitingForPlayers
 };
 
 class BlazingSynapseServer

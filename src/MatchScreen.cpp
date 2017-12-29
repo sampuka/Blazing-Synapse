@@ -34,7 +34,7 @@ MatchScreen::~MatchScreen()
 {
     cout << "~MatchScreen()" << endl;
     delete map;
-    //close socket?
+    sock->disconnect();
     delete sock;
 }
 

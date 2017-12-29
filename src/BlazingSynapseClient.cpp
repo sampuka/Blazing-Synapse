@@ -73,7 +73,12 @@ void BlazingSynapseClient::main_loop()
 		window->close();
 	    
 	    if (event.type == sf::Event::KeyPressed)
-		keyList.push_back(event.key);
+	    {
+		if (event.key.code == sf::Keyboard::Escape)
+		    window->close();
+		else
+		    keyList.push_back(event.key);
+	    }
 	}
 	
 	time = clock.restart();

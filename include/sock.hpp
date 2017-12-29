@@ -18,6 +18,9 @@ sf::TcpListener* sock_server_init();
 sf::TcpSocket* sock_listen(sf::TcpListener *listener);
 
 void sock_createMatch(sf::TcpSocket *sock, std::string mapName, MatchMap **map);
+MatchMap* sock_letCreateMatch(sf::TcpSocket *sock);
+
 void sock_joinMatch(sf::TcpSocket *sock, MatchMap **map);
+void sock_letJoinMatch(sf::TcpSocket *sock, std::string mapName);
 
 #endif

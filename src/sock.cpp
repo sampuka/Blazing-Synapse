@@ -57,6 +57,17 @@ void sock_createMatch(sf::TcpSocket *sock, string mapName, MatchMap **map)
     sock->send(packet);
 }
 
+MatchMap* sock_letCreateMatch(sf::TcpSocket *sock)
+{
+    cout << "Waiting for map creation... " << flush;
+    sf::Packet packet;
+    sock->receive(packet);
+    cout << "Recieved!" << endl;
+    string mapName;
+    packet >> mapName;
+    return new MatchMap(mapName);
+}
+
 void sock_joinMatch(sf::TcpSocket *sock, MatchMap **map)
 {
     cout << "Joining Match" << endl;
@@ -65,4 +76,13 @@ void sock_joinMatch(sf::TcpSocket *sock, MatchMap **map)
     string mapName;
     packet >> mapName;
     (*map) = new MatchMap(mapName);
+}
+
+void sock_letJoinMatch(sf::TcpSocket *sock, string mapName)
+{
+    cout << "Waiting for join... " << flush;
+    sf::Packet packet;
+    packet << mapName;
+    sock->send(packet);
+    cout << "Sent!" << endl;
 }
