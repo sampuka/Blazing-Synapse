@@ -86,7 +86,7 @@ void BlazingSynapseServer::connection_handle_loop()
     player2sock = sock_listen(listener);
     sock_letJoinMatch(player2sock, map->getMapName());
 
-    //sock_startGame(player1sock, player2sock);
+    sock_sendGameStart(player1sock, player2sock);
     state = ServerState::WaitingForPlayerInput;
 
     while(true)

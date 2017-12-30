@@ -10,26 +10,13 @@ MatchScreen::MatchScreen(sf::RenderWindow *_window, MatchRole _role)
     window = _window;
     role = _role;
 
+    isMapCreated = false;
+    
     //Setup keyboard layout
     kblayout[sf::Keyboard::D] = Direction::E;
     kblayout[sf::Keyboard::A] = Direction::W;
     //kblayout[sf::Keyboard::] = Direction::;
 
-    /*
-    sock = sock_client_init();
-    if (role == MatchRole::Creator)
-    {
-	sock_createMatch(sock, "Test map", &map);
-	currentState = MatchState::Pregame;
-    }
-    else if (role == MatchRole::Joiner)
-    {
-	sock_joinMatch(sock, &map);
-	currentState = MatchState::WaitingForPackage;
-    }
-    else
-	cout << "Unhandled MatchRole - Segfault inevitable probably" << endl;
-    */
     connection_handle_loop_thread = new thread(&MatchScreen::connection_handle_loop, this);
 }
 
@@ -72,6 +59,10 @@ GameState MatchScreen::update(sf::Time t0, std::vector<sf::Event::KeyEvent> keyL
     switch (currentState)
     {
     case MatchState::Pregame:
+	if (isMapCreated)
+	    map->drawMap(window);
+	else
+	    window->clear(sf::Color::Blue);
 	break;
 
     case MatchState::WaitingForInput:
@@ -107,13 +98,16 @@ void MatchScreen::connection_handle_loop()
     if (role == MatchRole::Creator)
     {
 	sock_createMatch(sock, "Test map", &map);
-	currentState = MatchState::Pregame;
     }
     else if (role == MatchRole::Joiner)
     {
 	sock_joinMatch(sock, &map);
-	currentState = MatchState::WaitingForPackage;
     }
     else
 	cout << "Unhandled MatchRole - Segfault inevitable probably" << endl;
+    isMapCreated = true;
+    currentState = MatchState::Pregame;
+
+    sock_receiveGameStart(sock);
+    currentState = MatchState::WaitingForInput;
 }

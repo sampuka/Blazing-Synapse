@@ -30,12 +30,12 @@ private:
 
     ServerState state;
     bool windowClosed;
+    MatchMap *map;
 
     sf::TcpListener *listener;
     sf::TcpSocket *player1sock;
     sf::TcpSocket *player2sock;
     sf::RenderWindow *window;
-    MatchMap *map;
 };
 
 #endif

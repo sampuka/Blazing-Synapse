@@ -12,6 +12,14 @@ enum class MatchRole
     Joiner
 };
 
+enum class PackageType
+{
+    Init,
+    CreateMatch,
+    JoinMatch,
+    GameStart
+};
+
 sf::TcpSocket* sock_client_init();
 sf::TcpListener* sock_server_init();
 
@@ -22,5 +30,9 @@ MatchMap* sock_letCreateMatch(sf::TcpSocket *sock);
 
 void sock_joinMatch(sf::TcpSocket *sock, MatchMap **map);
 void sock_letJoinMatch(sf::TcpSocket *sock, std::string mapName);
+
+void sock_sendGameStart(sf::TcpSocket *sock1, sf::TcpSocket *sock2);
+void sock_receiveGameStart(sf::TcpSocket *sock);
+
 
 #endif

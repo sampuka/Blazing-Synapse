@@ -4,6 +4,68 @@
 
 using namespace std;
 
+sf::Packet& operator <<(sf::Packet& packet, const PackageType& type)
+{
+    sf::Int8 i;
+    switch (type)
+    {
+    case PackageType::Init:
+	i = 1;
+	break;
+
+    case PackageType::CreateMatch:
+	i = 2;
+	break;
+
+    case PackageType::JoinMatch:
+	i = 3;
+	break;
+
+    case PackageType::GameStart:
+	i = 4;
+	break;
+
+    default:
+	cout << "Unknown PackageType in packet overload" << endl;
+        i = -1;
+    }
+    packet << i;
+    return packet;
+}
+sf::Packet& operator >>(sf::Packet& packet, PackageType& type)
+{
+    sf::Int8 i;
+    packet >> i;
+
+    switch (i)
+    {
+    case 1:
+	type = PackageType::Init;
+	break;
+
+    case 2:
+	type = PackageType::CreateMatch;
+	break;
+
+    case 3:
+	type = PackageType::JoinMatch;
+	break;
+
+    case 4:
+	type = PackageType::GameStart;
+	break;
+
+    case -1:
+	cout << "Unknown PackageType in packet overload" << endl;
+	break;
+
+    default:
+	cout << "Dunno what the fuck could posibly go so wrong" << endl;
+    }
+    
+    return packet;
+}
+
 sf::TcpSocket* sock_client_init()
 {
     cout << "Connecting to server... ";
@@ -85,4 +147,25 @@ void sock_letJoinMatch(sf::TcpSocket *sock, string mapName)
     packet << mapName;
     sock->send(packet);
     cout << "Sent!" << endl;
+}
+
+void sock_sendGameStart(sf::TcpSocket *sock1, sf::TcpSocket *sock2)
+{
+    sf::Packet packet;
+    packet << PackageType::GameStart;
+    sock1->send(packet);
+    sock2->send(packet); //Can I reuse packet? Think so, seems to work
+    cout << "Sent GameStart package" << endl;
+}
+
+void sock_receiveGameStart(sf::TcpSocket *sock)
+{
+    sf::Packet packet;
+    sock->receive(packet);
+    PackageType type;
+    packet >> type;
+    if (type == PackageType::GameStart)
+	cout << "Received GameStart package" << endl;
+    else
+	cout << "Received something not GameStart package - probably fatal" << endl;
 }

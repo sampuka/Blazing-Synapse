@@ -28,6 +28,7 @@ private:
     std::thread *connection_handle_loop_thread;
     
     MatchMap *map;
+    bool isMapCreated;
     MatchState currentState;
     MatchRole role;
 
