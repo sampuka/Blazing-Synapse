@@ -10,7 +10,13 @@ MatchScreen::MatchScreen(sf::RenderWindow *_window, MatchRole _role)
     window = _window;
     role = _role;
 
+    if (role == MatchRole::Creator)
+	playerNumber = 1;
+    else
+	playerNumber = 2;
+
     isMapCreated = false;
+    activeSoldier = 0;
     
     //Setup keyboard layout
     kblayout[sf::Keyboard::D] = Direction::E;
@@ -30,12 +36,14 @@ MatchScreen::~MatchScreen()
 
 GameState MatchScreen::update(sf::Time t0, std::vector<sf::Event::KeyEvent> keyList)
 {
+    MapEvent event(EventType::NoType);
+    
     for (sf::Event::KeyEvent key : keyList)
     {
 	switch (currentState)
 	{
 	case MatchState::Pregame:
-	    //No keyboard handling for pregame, waiting for package
+	    //No keyboard handling for pregame, waiting for GameStart package
 	    break;
 
 	case MatchState::WaitingForPackage:
@@ -43,16 +51,32 @@ GameState MatchScreen::update(sf::Time t0, std::vector<sf::Event::KeyEvent> keyL
 	    break;
 
 	case MatchState::WaitingForInput:
-	    cout << "Unhandled keyboard input" << endl;
+	    if (key.code == sf::Keyboard::Return)
+	    {
+		nextSoldier();
+	    }
+	    else if (kblayout.count(key.code))
+	    {
+		cout << "Creating MoveSoldier event" << endl;
+		event.type = EventType::MoveSoldier;
+		event.info.MoveSoldier.activeSoldier = activeSoldier;
+		event.info.MoveSoldier.dir = kblayout[key.code];
+		eventList.push_back(event);
+
+		if(!map->possibleEvents(eventList))
+		{
+		    cout << "Impossible event" << endl;
+		    eventList.pop_back();
+		}
+	    }
+	    else
+		cout << "Unhandled keyboard input" << endl;
 	    break;
 
 	default:
 	    cout << "Unhandled state in keyboard handling" << endl;
 	}
     }
-
-    //if (currentState == MatchState::WaitingForPackage)
-	//sock_recv();
 
     //Display switch
     window->clear();
@@ -88,7 +112,7 @@ GameState MatchScreen::update(sf::Time t0, std::vector<sf::Event::KeyEvent> keyL
 	return GameState::MatchJoiner;
 	break;
     }
-    cout << "Unhandled MatchRole - Segfault inevitable probably" << endl;
+    cout << "Unhandled MatchRole - probably fatal, going to main menu screen" << endl;
     return GameState::MainMenu;
 }
 
@@ -110,4 +134,30 @@ void MatchScreen::connection_handle_loop()
 
     sock_receiveGameStart(sock);
     currentState = MatchState::WaitingForInput;
+}
+
+void MatchScreen::updateActiveSoldier()
+{
+    activeSoldier = 0;
+}
+
+void MatchScreen::nextSoldier()
+{
+    int currentSoldier = activeSoldier;
+    if (currentSoldier == map->getSoldierCount()-1)
+	currentSoldier = 0;
+    else
+	currentSoldier++;
+    for (int i = currentSoldier; i < map->getSoldierCount(); i++)
+    {
+	if (map->getSoldier(i).getPlayerNumber() == playerNumber)
+	{
+	    activeSoldier = i;
+	    return;
+	}
+    }
+
+    currentState = MatchState::WaitingForPackage;
+    //sock_sendEvents(eventList);
+    map->executeEvents(eventList);
 }

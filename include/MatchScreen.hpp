@@ -26,11 +26,18 @@ public:
 private:
     void connection_handle_loop();
     std::thread *connection_handle_loop_thread;
+
+    void updateActiveSoldier(); //deprecated?
+    void nextSoldier();
+    int activeSoldier;
+
+    std::vector<MapEvent> eventList;
     
     MatchMap *map;
     bool isMapCreated;
     MatchState currentState;
     MatchRole role;
+    int playerNumber;
 
     sf::TcpSocket *sock;
 

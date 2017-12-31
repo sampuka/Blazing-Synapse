@@ -15,18 +15,6 @@ MapEvent::~MapEvent()
 {
 }
 
-/*
-EventType MapEvent::getType()
-{
-    return type;
-}
-
-void MapEvent::setType(EventType _type)
-{
-    type = _type;
-}
-*/
-
 sf::Packet& operator <<(sf::Packet& packet, const MapEvent& event)
 {
     sf::Int8 i;
